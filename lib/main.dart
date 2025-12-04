@@ -38,7 +38,6 @@ class _ReviewsScreenState extends State<ReviewsScreen> {
     Review(id: const Uuid().v4(), title: 'Pizza decente', comment: 'Un po\' bruciata sui bordi.', rating: 3),
   ];
 
-  // Gestisce l'aggiunta di una nuova recensione
   void _addReview() async {
     final result = await Navigator.of(context).push<Map<String, Object?>>(
       MaterialPageRoute(
@@ -120,7 +119,6 @@ class _ReviewsScreenState extends State<ReviewsScreen> {
 }
 
 
-
 class ReviewFormScreen extends StatelessWidget {
   final Review? review; // Opzionale per la modalità Modifica
 
@@ -128,16 +126,13 @@ class ReviewFormScreen extends StatelessWidget {
 
   FormGroup buildForm() {
     return fb.group({
-      // Campo Titolo: richiesto, min 3 caratteri
       'title': FormControl<String>(
         value: review?.title,
         validators: [Validators.required, Validators.minLength(3)],
       ),
-      // Campo Commento: opzionale
       'comment': FormControl<String>(
         value: review?.comment,
       ),
-      // Campo Rating: richiesto, intero tra 1 e 5
       'rating': FormControl<int>(
         value: review?.rating ?? 5,
         validators: [
@@ -166,7 +161,6 @@ class ReviewFormScreen extends StatelessWidget {
             return Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: <Widget>[
-                // Campo Titolo
                 ReactiveTextField<String>(
                   formControlName: 'title',
                   decoration: const InputDecoration(
@@ -181,7 +175,6 @@ class ReviewFormScreen extends StatelessWidget {
                 ),
                 const SizedBox(height: 16),
 
-                // Campo Commento
                 ReactiveTextField<String>(
                   formControlName: 'comment',
                   decoration: const InputDecoration(
@@ -194,14 +187,12 @@ class ReviewFormScreen extends StatelessWidget {
                 ),
                 const SizedBox(height: 16),
 
-                // Campo Rating (Slider)
                 const Text('Valutazione (1-5) *', style: TextStyle(fontWeight: FontWeight.bold)),
                 ReactiveSlider(
                   formControlName: 'rating',
                   min: 1.0,
                   max: 5.0,
                   divisions: 4,
-                  // Visualizza il valore corrente accanto allo Slider
                   decoration: InputDecoration(
                     suffixIcon: ReactiveValueListenableBuilder(
                       formControlName: 'rating',
@@ -223,9 +214,8 @@ class ReviewFormScreen extends StatelessWidget {
                   builder: (context, form, child) {
                     return ElevatedButton.icon(
                       onPressed: form.valid ? () {
-                        // Pop con la Map contenente i dati validati
                         Navigator.of(context).pop(form.value);
-                      } : null, // Disabilita se il form non è valido
+                      } : null,
                       style: ElevatedButton.styleFrom(
                         padding: const EdgeInsets.all(16.0),
                         backgroundColor: form.valid ? Theme.of(context).colorScheme.primary : Colors.grey,
