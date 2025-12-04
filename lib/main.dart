@@ -120,7 +120,7 @@ class _ReviewsScreenState extends State<ReviewsScreen> {
 
 
 class ReviewFormScreen extends StatelessWidget {
-  final Review? review; // Opzionale per la modalità Modifica
+  final Review? review; 
 
   const ReviewFormScreen({super.key, this.review});
 
