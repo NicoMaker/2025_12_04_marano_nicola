@@ -340,7 +340,7 @@ class ReviewFormScreen extends StatelessWidget {
                         ReactiveValueListenableBuilder(
                           formControlName: 'rating',
                           builder: (context, control, child) {
-                            final ratingValue = control.value?.round() ?? 5;
+                            final ratingValue = control.value as double;
                             final valueColor = ratingValue > 3
                                 ? Colors.green
                                 : (ratingValue == 3
