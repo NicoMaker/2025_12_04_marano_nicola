@@ -15,15 +15,17 @@ class Review {
     required this.rating,
   }) : assert(rating >= 1 && rating <= 5, 'Rating must be between 1 and 5');
 
+
   Review copyWithFormData(Map<String, Object?> formData) {
     return Review(
       id: this.id,
       title: formData['title'] as String,
       comment: formData['comment'] as String?,
-      rating: formData['rating'] as int,
+      rating: (formData['rating'] as double).round(),
     );
   }
 }
+
 class ReviewsScreen extends StatefulWidget {
   const ReviewsScreen({super.key});
 
@@ -39,6 +41,7 @@ class _ReviewsScreenState extends State<ReviewsScreen> {
   ];
 
   void _addReview() async {
+
     final result = await Navigator.of(context).push<Map<String, Object?>>(
       MaterialPageRoute(
         builder: (context) => const ReviewFormScreen(),
@@ -50,7 +53,7 @@ class _ReviewsScreenState extends State<ReviewsScreen> {
         id: _uuid.v4(),
         title: result['title'] as String,
         comment: result['comment'] as String?,
-        rating: result['rating'] as int,
+        rating: (result['rating'] as double).round(),
       );
 
       setState(() {
@@ -59,7 +62,9 @@ class _ReviewsScreenState extends State<ReviewsScreen> {
     }
   }
 
+
   void _editReview(Review reviewToEdit) async {
+    // Naviga verso ReviewFormScreen passando la recensione da modificare
     final result = await Navigator.of(context).push<Map<String, Object?>>(
       MaterialPageRoute(
         builder: (context) => ReviewFormScreen(review: reviewToEdit),
@@ -76,6 +81,14 @@ class _ReviewsScreenState extends State<ReviewsScreen> {
       }
     }
   }
+  
+
+  void _deleteReview(Review reviewToDelete) {
+    setState(() {
+      _reviews.removeWhere((r) => r.id == reviewToDelete.id);
+    });
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -92,24 +105,39 @@ class _ReviewsScreenState extends State<ReviewsScreen> {
                 final review = _reviews[index];
                 return Card(
                   margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                  child: ListTile(
-                    leading: CircleAvatar(
-                      backgroundColor: review.rating > 3 ? Colors.green : Colors.orange,
-                      child: Text('${review.rating}', style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+                  child: Dismissible( 
+                    key: ValueKey(review.id),
+                    direction: DismissDirection.endToStart,
+                    background: Container(
+                      color: Colors.red,
+                      alignment: Alignment.centerRight,
+                      padding: const EdgeInsets.symmetric(horizontal: 20),
+                      child: const Icon(Icons.delete, color: Colors.white, size: 30),
                     ),
-                    title: Text(review.title, style: const TextStyle(fontWeight: FontWeight.bold)),
-                    subtitle: review.comment != null
-                        ? Text(review.comment!, maxLines: 2, overflow: TextOverflow.ellipsis)
-                        : const Text('Nessun commento.'),
-                    trailing: IconButton(
-                      icon: const Icon(Icons.edit, color: Colors.blue),
-                      onPressed: () => _editReview(review),
+                    onDismissed: (direction) {
+                      _deleteReview(review);
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text('Recensione "${review.title}" eliminata.')),
+                      );
+                    },
+                    child: ListTile(
+                      leading: CircleAvatar(
+                        backgroundColor: review.rating > 3 ? Colors.green : (review.rating == 3 ? Colors.amber : Colors.red),
+                        child: Text('${review.rating}', style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+                      ),
+                      title: Text(review.title, style: const TextStyle(fontWeight: FontWeight.bold)),
+                      subtitle: review.comment != null && review.comment!.isNotEmpty
+                          ? Text(review.comment!, maxLines: 2, overflow: TextOverflow.ellipsis)
+                          : const Text('Nessun commento.'),
+                      trailing: IconButton(
+                        icon: const Icon(Icons.edit, color: Colors.blue),
+                        onPressed: () => _editReview(review),
+                      ),
                     ),
                   ),
                 );
               },
             ),
-      // Pulsante "+" per aggiungere
       floatingActionButton: FloatingActionButton(
         onPressed: _addReview,
         child: const Icon(Icons.add),
@@ -133,8 +161,8 @@ class ReviewFormScreen extends StatelessWidget {
       'comment': FormControl<String>(
         value: review?.comment,
       ),
-      'rating': FormControl<int>(
-        value: review?.rating ?? 5,
+      'rating': FormControl<double>(
+        value: review?.rating.toDouble() ?? 5.0, 
         validators: [
           Validators.required,
           Validators.min(1),
@@ -175,6 +203,7 @@ class ReviewFormScreen extends StatelessWidget {
                 ),
                 const SizedBox(height: 16),
 
+                // Campo Commento
                 ReactiveTextField<String>(
                   formControlName: 'comment',
                   decoration: const InputDecoration(
@@ -186,13 +215,12 @@ class ReviewFormScreen extends StatelessWidget {
                   textInputAction: TextInputAction.done,
                 ),
                 const SizedBox(height: 16),
-
                 const Text('Valutazione (1-5) *', style: TextStyle(fontWeight: FontWeight.bold)),
                 ReactiveSlider(
                   formControlName: 'rating',
                   min: 1.0,
                   max: 5.0,
-                  divisions: 4,
+                  divisions: 4, 
                   decoration: InputDecoration(
                     suffixIcon: ReactiveValueListenableBuilder(
                       formControlName: 'rating',
@@ -201,7 +229,13 @@ class ReviewFormScreen extends StatelessWidget {
                           padding: const EdgeInsets.only(right: 8.0),
                           child: Text(
                             '${control.value?.round() ?? 5}/5',
-                            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                            style: TextStyle(
+                              fontSize: 18, 
+                              fontWeight: FontWeight.bold,
+                              color: control.value == 5 
+                                ? Colors.green 
+                                : (control.value == 1 ? Colors.red : Colors.orange),
+                            ),
                           ),
                         );
                       },
@@ -215,7 +249,7 @@ class ReviewFormScreen extends StatelessWidget {
                     return ElevatedButton.icon(
                       onPressed: form.valid ? () {
                         Navigator.of(context).pop(form.value);
-                      } : null,
+                      } : null, 
                       style: ElevatedButton.styleFrom(
                         padding: const EdgeInsets.all(16.0),
                         backgroundColor: form.valid ? Theme.of(context).colorScheme.primary : Colors.grey,
@@ -235,6 +269,7 @@ class ReviewFormScreen extends StatelessWidget {
   }
 }
 
+// Classe principale dell'App
 void main() {
   runApp(const MyApp());
 }
