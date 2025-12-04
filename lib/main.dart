@@ -38,6 +38,7 @@ class _ReviewsScreenState extends State<ReviewsScreen> {
   final List<Review> _reviews = [
     Review(id: const Uuid().v4(), title: 'Ottimo Burger!', comment: 'Patty succosa e servizio veloce.', rating: 5),
     Review(id: const Uuid().v4(), title: 'Pizza decente', comment: 'Un po\' bruciata sui bordi.', rating: 3),
+    Review(id: const Uuid().v4(), title: 'Deliziosa Pizza', comment: 'Piatto delizioso e servizio impeccabile.', rating: 4),
   ];
 
   void _addReview() async {
