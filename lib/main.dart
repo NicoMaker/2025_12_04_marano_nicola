@@ -1,43 +1,28 @@
-import "package:flutter/material.dart";
-import "package:flutter_riverpod/flutter_riverpod.dart";
-import "package:talker_riverpod_logger/talker_riverpod_logger.dart";
+class Review {
+  final String id; 
+  String title;
+  String? comment; 
+  int rating; 
 
-void main() {
-  runApp(
-    ProviderScope(
-      // a simple logger for riverpod states
-      // you can ignore this if you don't want it
-      observers: [
-        TalkerRiverpodObserver(
-          settings: const TalkerRiverpodLoggerSettings(
-            printProviderDisposed: true,
-          ),
-        ),
-      ],
-      // a configuration that denies retries when a provider fails
-      // you can ignore this if you don't want it
-      retry: (retryCount, error) {
-        return null;
-      },
-      child: const MyApp(),
-    ),
-  );
-}
+  Review({
+    required this.id,
+    required this.title,
+    this.comment,
+    required this.rating,
+  }) : assert(rating >= 1 && rating <= 5, 'Rating must be between 1 and 5');
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  Review.fromMap(Map<String, Object?> map)
+      : id = map['id'] as String? ?? DateTime.now().millisecondsSinceEpoch.toString(), 
+        title = map['title'] as String,
+        comment = map['comment'] as String?,
+        rating = map['rating'] as int;
 
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: Colors.yellow,
-        ),
-      ),
-      // TODO: your root goes here
-      home: Container(),
-    );
+  Map<String, Object?> toMap() {
+    return {
+      'id': id,
+      'title': title,
+      'comment': comment,
+      'rating': rating,
+    };
   }
 }
