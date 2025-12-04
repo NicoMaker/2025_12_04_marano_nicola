@@ -6,10 +6,7 @@ class Prodotto {
   final double prezzo; // Prezzo del Prodotto
   // Aggiungi altre proprietà qui se servono...
 
-  Prodotto({
-    required this.nome,
-    required this.prezzo,
-  });
+  Prodotto({required this.nome, required this.prezzo});
 }
 
 // --- CLASSE PRINCIPALE (Avvio App) ---
@@ -24,9 +21,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Esame Flutter',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
+      theme: ThemeData(primarySwatch: Colors.blue),
       home: const LoginPage(), // Inizia dalla pagina di Login
     );
   }
@@ -58,9 +53,9 @@ class _LoginPageState extends State<LoginPage> {
           MaterialPageRoute(builder: (context) => const ProductsScreen()),
         );
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Credenziali errate')),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(const SnackBar(content: Text('Credenziali errate')));
       }
     }
   }
@@ -103,7 +98,8 @@ class _LoginPageState extends State<LoginPage> {
                   },
                 ),
                 const SizedBox(height: 20),
-                ElevatedButton( // Il tuo richiesto ElevatedButton
+                ElevatedButton(
+                  // Il tuo richiesto ElevatedButton
                   onPressed: _login,
                   child: const Text('Accedi'),
                 ),
@@ -146,8 +142,12 @@ class _ProductsScreenState extends State<ProductsScreen> {
   @override
   void initState() {
     super.initState();
-    _listaVisualizzata = List.from(_tuttaLaLista); // Inizializza con tutti i dati
-    _calcolaStatistiche(_tuttaLaLista); // Calcola subito le statistiche iniziali
+    _listaVisualizzata = List.from(
+      _tuttaLaLista,
+    ); // Inizializza con tutti i dati
+    _calcolaStatistiche(
+      _tuttaLaLista,
+    ); // Calcola subito le statistiche iniziali
   }
 
   // A. FILTRARE (Mostra solo quelli con prezzo superiore al filtro)
@@ -186,7 +186,8 @@ class _ProductsScreenState extends State<ProductsScreen> {
 
     setState(() {
       _mediaPrezzi = media;
-      _prodottoPiuCostoso = "${ilMaggiore.nome} (${ilMaggiore.prezzo.toStringAsFixed(2)} €)";
+      _prodottoPiuCostoso =
+          "${ilMaggiore.nome} (${ilMaggiore.prezzo.toStringAsFixed(2)} €)";
     });
   }
 
@@ -204,19 +205,23 @@ class _ProductsScreenState extends State<ProductsScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text('📊 Analisi della Lista Completa', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                  const Text(
+                    '📊 Analisi della Lista Completa',
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                  ),
                   const Divider(),
                   Text('Media Prezzi: *${_mediaPrezzi.toStringAsFixed(2)} €*'),
                   Text('Prodotto più Costoso: *$_prodottoPiuCostoso*'),
                   ElevatedButton(
-                    onPressed: () => _calcolaStatistiche(_tuttaLaLista), // Ricacalcola
+                    onPressed: () =>
+                        _calcolaStatistiche(_tuttaLaLista), // Ricacalcola
                     child: const Text('Ricalcola Statistiche'),
                   ),
                 ],
               ),
             ),
           ),
-          
+
           // Blocco 2: Filtro
           Padding(
             padding: const EdgeInsets.all(8.0),
@@ -252,11 +257,14 @@ class _ProductsScreenState extends State<ProductsScreen> {
               ],
             ),
           ),
-          
+
           // Blocco 3: Lista Visualizzata
           const Padding(
             padding: EdgeInsets.only(top: 8.0, left: 8.0, right: 8.0),
-            child: Text('Risultati del Filtro:', style: TextStyle(fontWeight: FontWeight.bold)),
+            child: Text(
+              'Risultati del Filtro:',
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
           ),
           Expanded(
             child: ListView.builder(
@@ -265,14 +273,17 @@ class _ProductsScreenState extends State<ProductsScreen> {
                 final prodotto = _listaVisualizzata[index];
                 return ListTile(
                   title: Text(prodotto.nome),
-                  trailing: Text('${prodotto.prezzo.toStringAsFixed(2)} €', style: const TextStyle(fontWeight: FontWeight.bold)),
+                  trailing: Text(
+                    '${prodotto.prezzo.toStringAsFixed(2)} €',
+                    style: const TextStyle(fontWeight: FontWeight.bold),
+                  ),
                   leading: const Icon(Icons.shopping_bag),
                 );
               },
             ),
           ),
         ],
-      ),
-    );
-  }
+      ),
+    );
+  }
 }
