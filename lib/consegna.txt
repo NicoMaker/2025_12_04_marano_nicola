@@ -1,0 +1,15 @@
+
+
+**Project name**: MyFork
+
+**Project Description**: An app to release reviews for local restaurants. The home screen lists all reviews, and a "+" button on the down/right opens a form to add a new one. We can always edit existing reviews by tapping the edit icon next to them.
+
+**Important Note**: this exercise focuses on local state management using StatefulWidget; to help you, we are not requiring any global state management solution (Riverpod). You are free to choose to use it, but it's not required.
+
+**Core Technical Requirements**:
+  - write the class that represents a Review (with title, comment and rating fields); a rating is an integer from 1 to 5. comment is optional.
+  - write two widgets: the home screen (list of reviews) and the "edit" widget form (used to add or to edit a review)
+  - the home screen is a StatefulWidget that holds a list of reviews in its local state (or, write a notifier and use Riverpod if you prefer)
+  - the form screen uses reactive_forms to create a form to build a new review
+  - as always, the form screen pops with a `Map<String, Object?>` containing a validated form data
+  - use the same form screen to edit an existing review, by accepting an optional review object to pre-fill the form fields
