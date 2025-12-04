@@ -65,7 +65,6 @@ class _ReviewsScreenState extends State<ReviewsScreen> {
 
 
   void _editReview(Review reviewToEdit) async {
-    // Naviga verso ReviewFormScreen passando la recensione da modificare
     final result = await Navigator.of(context).push<Map<String, Object?>>(
       MaterialPageRoute(
         builder: (context) => ReviewFormScreen(review: reviewToEdit),
